@@ -128,8 +128,8 @@ def subscribers_restaurants(spark):
 
         df = df.dropDuplicates(['client_id', 'restaurant_id'])
         return df
-    except:
-        print("PostgreSQL data reading error occured, please check your configuration parameters!") 
+    except Exception as e:
+        print("PostgreSQL data reading error occured, please check your configuration parameters! ", e) 
 
 #joining data on reastaurants and subscribers
 def join(restaurant_read_stream_df, subscribers_restaurant_df):
