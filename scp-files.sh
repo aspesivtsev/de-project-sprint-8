@@ -1,4 +1,4 @@
-HOST_VM=84.201.129.143  #укажите здесь хост вашей вм.#!/bin/bash
+HOST_VM=---.---.---.---  #укажите здесь хост вашей вм.#!/bin/bash
 
 USER_VM=yc-user
 IMAGE_VM=$(ssh -i ssh_key $USER_VM@$HOST_VM docker ps --format '{{.Names}}')
