@@ -104,11 +104,13 @@ kafkacat -b rc1b-2erh7b35n4j4v869.mdb.yandexcloud.net:9091 \
 -X sasl.mechanisms=SCRAM-SHA-512 \
 -X sasl.username="de-student" \
 -X sasl.password="ltcneltyn" \
--X ssl.ca.location=/.ssh/CA.pem \
+-X ssl.ca.location=/lessons/data_to_vm/CA.pem \
 -t student.topic.cohort20.tolique7.in \
 -K: \
 -P
 first_message:{"restaurant_id": "123e4567-e89b-12d3-a456-426614174000","adv_campaign_id": "123e4567-e89b-12d3-a456-426614174003","adv_campaign_content": "first campaign","adv_campaign_owner": "Ivanov Ivan Ivanovich","adv_campaign_owner_contact": "iiivanov@restaurant.ru","adv_campaign_datetime_start": 1678615562,"adv_campaign_datetime_end": 2659207116,"datetime_created": 1678879362}
+
+ctrl+D
 
 # read topic
 kafkacat -b rc1b-2erh7b35n4j4v869.mdb.yandexcloud.net:9091 \
@@ -116,7 +118,7 @@ kafkacat -b rc1b-2erh7b35n4j4v869.mdb.yandexcloud.net:9091 \
 -X sasl.mechanisms=SCRAM-SHA-512 \
 -X sasl.username="de-student" \
 -X sasl.password="ltcneltyn" \
--X ssl.ca.location=/.ssh/CA.pem \
+-X ssl.ca.location=/lessons/data_to_vm/CA.pem \
 -t student.topic.cohort20.tolique7.out \
 -C \
 -o beginning
