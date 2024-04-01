@@ -1,4 +1,5 @@
 import os
+import logging 
 from datetime import datetime, timezone
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
@@ -40,9 +41,9 @@ def foreach_batch_function(df):
         # clear memory from df
         df.unpersist()
         
-    except Exception as e:
+    except Exception as err:
         # handling errors in Kafka
-        print("Unable to connect to Kafka: ", e) 
+        logging.error("Unable to connect to Kafka!",exc_info=True)
    
 def spark_init(spark_session_name) -> SparkSession:
     try:
@@ -53,8 +54,8 @@ def spark_init(spark_session_name) -> SparkSession:
             .config("spark.sql.session.timeZone", "UTC") \
             .getOrCreate()
         )
-    except Exception as e:
-        print("An error occured during the creating of Spark session, please check your configuration parameters: ", e) 
+    except Exception as err:
+        logging.error("An error occured during the creating of Spark session, please check your configuration parameters!",exc_info=True)
 
 # reading stream for restaurants
 def restaurant_read_stream(spark):
@@ -108,9 +109,9 @@ def restaurant_read_stream(spark):
                     F.col('adv_campaign_datetime_end') > current_timestamp_utc))
         return df_filtered
     
-    except Exception as e:
+    except Exception as err:
         # handling connection errors in Kafka
-        print("Error connecting to Kafka: ", e)  
+        logging.error("Unable to connect to Kafka!",exc_info=True)  
 
 # getting all restaurant subscribers
 def subscribers_restaurants(spark):
@@ -128,8 +129,9 @@ def subscribers_restaurants(spark):
 
         df = df.dropDuplicates(['client_id', 'restaurant_id'])
         return df
-    except Exception as e:
-        print("PostgreSQL data reading error occured, please check your configuration parameters!", e) 
+    
+    except Exception as err:
+        logging.error("PostgreSQL data reading error occured, please check your configuration parameters!",exc_info=True)
 
 #joining data on reastaurants and subscribers
 def join(restaurant_read_stream_df, subscribers_restaurant_df):
@@ -151,15 +153,19 @@ def join(restaurant_read_stream_df, subscribers_restaurant_df):
 
 if __name__ == '__main__':
     spark = spark_init("RestaurantSubscribeStreamingService")
-    print("\n Session created successfully \n")
+    logging.info("Session created successfully")
+    
     spark.conf.set('spark.sql.streaming.checkpointLocation', 'test_query')
-    print("\n Checkpoint created \n")
+    logging.info("Checkpoint created successfully")
+    
     restaurant_read_stream_df = restaurant_read_stream(spark)
-    print("\n Getting restaurant promos \n")
+    logging.info("Getting restaurant promos")
+
     subscribers_restaurant_df = subscribers_restaurants(spark)
-    print("\n Defining users who have restaurants in the list of favorites \n")
+    logging.info("Defining users who have restaurants in the list of favorites")
+    
     result = join(restaurant_read_stream_df, subscribers_restaurant_df)
-    print("\n Lists for notifications are created successfully \n")
+    logging.info("Lists for notifications are created successfully")
 
     query = (result.writeStream \
         .foreachBatch(foreach_batch_function) \
